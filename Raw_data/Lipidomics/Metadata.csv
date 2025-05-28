@@ -1,0 +1,141 @@
+Mouse,Group,Smolder_v_Flame,Exposure_length,Lipidomic Aliquot Vol (µL),Lipidomic Aliquot Date,Plasma Remaining for EV Isolation,Lung Tissue Available for Lipidomics,Lung Tissue RNASeq Data Available (all 'Y'),"Secreted Protein Data Available (from BALF samples, across ~10 markers of stress/injury/inflamm) (all 'Y')",Coverage across All Potential Analyses,Submit Lung and Plasma Samples (both Bulk and EV) to Baker Lab for Lipidomics?,Use as a Test Pilot Sample for EV Isolation Methods?
+1,Red Oak,Smolder,4,100,2/2/2023,N,Y,Y,Y,N,-,-
+2,Red Oak,Smolder,4,100,2/2/2023,Y,Y,Y,Y,Y,-,-
+3,Red Oak,Smolder,4,100,2/2/2023,Y,Y,Y,Y,Y,-,-
+4,Red Oak,Smolder,4,100,2/2/2023,Y,Y,Y,Y,Y,-,-
+5,Red Oak,Smolder,4,100,2/2/2023,Y,Y,Y,Y,Y,-,-
+6,Red Oak,Smolder,4,100,2/2/2023,N,Y,Y,Y,N,-,-
+7,Peat,Smolder,4,<50,2/2/2023,N,Y,Y,Y,N,-,-
+8,Peat,Smolder,4,100,2/2/2023,N,Y,Y,Y,N,-,-
+9,Peat,Smolder,4,50,2/2/2023,N,Y,Y,Y,N,-,-
+10,Peat,Smolder,4,75,2/2/2023,N,Y,Y,Y,N,-,-
+11,Peat,Smolder,4,100,2/2/2023,N,Y,Y,Y,N,-,-
+12,Peat,Smolder,4,100,2/2/2023,N,Y,Y,Y,N,-,-
+13,Pine needles,Smolder,4,100,2/2/2023,Y,Y,Y,Y,Y,Y,-
+14,Pine needles,Smolder,4,100,2/2/2023,Y,Y,Y,Y,Y,Y,-
+15,Pine needles,Smolder,4,100,2/2/2023,Y,Y,Y,Y,Y,Y,-
+16,Pine needles,Smolder,4,100,2/2/2023,Y,Y,Y,Y,Y,Y,-
+17,Pine needles,Smolder,4,100,2/2/2023,Y,Y,Y,Y,Y,Y,-
+18,Pine needles,Smolder,4,100,2/2/2023,Y,Y,Y,Y,Y,Y,-
+19,Pine,Smolder,4,100,2/2/2023,Y,Y,Y,Y,Y,Y,-
+20,Pine,Smolder,4,100,2/2/2023,Y,Y,Y,Y,Y,Y,-
+21,Pine,Smolder,4,100,2/2/2023,Y,Y,Y,Y,Y,Y,-
+22,Pine,Smolder,4,100,2/2/2023,Y,Y,Y,Y,Y,Y,-
+23,Pine,Smolder,4,100,2/2/2023,Y,Y,Y,Y,Y,Y,-
+24,Pine,Smolder,4,100,2/2/2023,Y,Y,Y,Y,Y,Y,-
+25,Eucalyptus,Smolder,4,100,2/2/2023,Y,Y,Y,Y,Y,Y,-
+26,Eucalyptus,Smolder,4,100,2/2/2023,Y,Y,Y,Y,Y,Y,-
+27,Eucalyptus,Smolder,4,100,2/2/2023,Y,Y,Y,Y,Y,Y,-
+28,Eucalyptus,Smolder,4,100,2/2/2023,Y,Y,Y,Y,Y,Y,-
+29,Eucalyptus,Smolder,4,100,2/2/2023,Y,Y,Y,Y,Y,Y,-
+30,Eucalyptus,Smolder,4,100,2/2/2023,Y,Y,Y,Y,Y,Y,-
+31,Saline (- control),,4,100,2/2/2023,N,N,Y,Y,N,Y - except not enough for EV isolations,-
+32,Saline (- control),,4,50,2/2/2023,N,N,Y,Y,N,Y - except not enough for EV isolations,-
+33,Saline (- control),,4,<50,2/2/2023,N,N,Y,Y,N,Y - except not enough for EV isolations,-
+34,Saline (- control),,4,100,2/2/2023,N,N,Y,Y,N,Y - except not enough for EV isolations,-
+35,Saline (- control),,4,100,2/2/2023,Y,N,Y,Y,N,"Y - enough for EV isolation, let's go ahead and include even though n=2 from saline for EV",-
+36,Saline (- control),,4,100,2/2/2023,Y,N,Y,Y,N,"Y - enough for EV isolation, let's go ahead and include even though n=2 from saline for EV",-
+37,Red Oak,Flame,4,0,,N,N,Y,Y,N,-,-
+38,Red Oak,Flame,4,0,,N,N,Y,Y,N,-,-
+39,Red Oak,Flame,4,0,,N,N,Y,Y,N,-,-
+40,Red Oak,Flame,4,100,2/2/2023,Y,N,Y,Y,N,-,Y
+41,Red Oak,Flame,4,100,2/2/2023,Y,N,Y,Y,N,-,Y
+42,Red Oak,Flame,4,100,2/2/2023,Y,N,Y,Y,N,-,Y
+43,Peat,Flame,4,0,,N,Y,Y,Y,N,-,-
+44,Peat,Flame,4,0,,N,Y,Y,Y,N,-,-
+45,Peat,Flame,4,100,2/2/2023,Y,Y,Y,Y,Y,-,-
+46,Peat,Flame,4,100,2/2/2023,Y,Y,Y,Y,Y,-,-
+47,Peat,Flame,4,100,2/2/2023,Y,Y,Y,Y,Y,-,-
+48,Peat,Flame,4,100,2/2/2023,Y,Y,Y,Y,Y,-,-
+49,Pine needles,Flame,4,100,2/2/2023,Y,Y,Y,Y,Y,Y,-
+50,Pine needles,Flame,4,100,2/2/2023,Y,Y,Y,Y,Y,Y,-
+51,Pine needles,Flame,4,100,2/2/2023,Y,Y,Y,Y,Y,Y,-
+52,Pine needles,Flame,4,100,2/2/2023,Y,Y,Y,Y,Y,Y,-
+53,Pine needles,Flame,4,100,2/2/2023,Y,Y,Y,Y,Y,Y,-
+54,Pine needles,Flame,4,100,2/2/2023,Y,Y,Y,Y,Y,Y,-
+55,Pine,Flame,4,100,2/2/2023,Y,Y,Y,Y,Y,Y,-
+56,Pine,Flame,4,100,2/2/2023,Y,Y,Y,Y,Y,Y,-
+57,Pine,Flame,4,100,2/2/2023,Y,Y,Y,Y,Y,Y,-
+58,Pine,Flame,4,100,2/2/2023,Y,Y,Y,Y,Y,Y,-
+59,Pine,Flame,4,100,2/2/2023,Y,Y,Y,Y,Y,Y,-
+60,Pine,Flame,4,100,2/2/2023,Y,Y,Y,Y,Y,Y,-
+61,Eucalyptus,Flame,4,100,2/2/2023,Y,Y,Y,Y,Y,Y,-
+62,Eucalyptus,Flame,4,100,2/2/2023,Y,Y,Y,Y,Y,Y,-
+63,Eucalyptus,Flame,4,100,2/2/2023,Y,Y,Y,Y,Y,Y,-
+64,Eucalyptus,Flame,4,100,2/2/2023,Y,Y,Y,Y,Y,Y,-
+65,Eucalyptus,Flame,4,100,2/2/2023,Y,Y,Y,Y,Y,Y,-
+66,Eucalyptus,Flame,4,100,2/2/2023,Y,Y,Y,Y,Y,Y,-
+67,LPS (+ control),,4,100,2/2/2023,Y,Y,Y,Y,Y,Y,-
+68,LPS (+ control),,4,100,2/2/2023,Y,Y,Y,Y,Y,Y,-
+69,LPS (+ control),,4,100,2/2/2023,Y,Y,Y,Y,Y,Y,-
+70,LPS (+ control),,4,100,2/2/2023,Y,Y,Y,Y,Y,Y,-
+71,Red Oak,Smolder,24,0 (used in Carberry et al. 2022),,N,Y,Y,Y,N,-,-
+72,Red Oak,Smolder,24,0 (used in Carberry et al. 2022),,N,Y,Y,Y,N,-,-
+73,Red Oak,Smolder,24,0 (used in Carberry et al. 2022),,N,Y,Y,Y,N,-,-
+74,Red Oak,Smolder,24,0 (used in Carberry et al. 2022),,N,Y,Y,Y,N,-,-
+75,Red Oak,Smolder,24,0 (used in Carberry et al. 2022),,N,Y,Y,Y,N,-,-
+76,Red Oak,Smolder,24,0 (used in Carberry et al. 2022),,N,Y,Y,Y,N,-,-
+77,Peat,Smolder,24,0 (used in Carberry et al. 2022),,N,Y,Y,Y,N,-,-
+78,Peat,Smolder,24,0 (used in Carberry et al. 2022),,N,Y,Y,Y,N,-,-
+79,Peat,Smolder,24,0 (used in Carberry et al. 2022),,N,Y,Y,Y,N,-,-
+80,Peat,Smolder,24,0 (used in Carberry et al. 2022),,N,Y,Y,Y,N,-,-
+81,Peat,Smolder,24,0 (used in Carberry et al. 2022),,N,Y,Y,Y,N,-,-
+82,Peat,Smolder,24,0 (used in Carberry et al. 2022),,N,Y,Y,Y,N,-,-
+83,Pine needles,Smolder,24,100,2/7/2023,Y,Y,Y,Y,Y,-,-
+84,Pine needles,Smolder,24,100,2/7/2023,Y,Y,Y,Y,Y,-,-
+85,Pine needles,Smolder,24,100,2/7/2023,Y,Y,Y,Y,Y,-,-
+86,Pine needles,Smolder,24,100,2/7/2023,Y,Y,Y,Y,Y,-,-
+87,Pine needles,Smolder,24,100,2/7/2023,Y,Y,Y,Y,Y,-,-
+88,Pine needles,Smolder,24,100,2/7/2023,Y,Y,Y,Y,Y,-,-
+89,Pine,Smolder,24,100,2/7/2023,Y,Y,Y,Y,Y,-,-
+90,Pine,Smolder,24,100,2/7/2023,Y,Y,Y,Y,Y,-,-
+91,Pine,Smolder,24,100,2/7/2023,Y,Y,Y,Y,Y,-,-
+92,Pine,Smolder,24,100,2/7/2023,Y,Y,Y,Y,Y,-,-
+93,Pine,Smolder,24,100,2/7/2023,Y,Y,Y,Y,Y,-,-
+94,Pine,Smolder,24,100,2/7/2023,Y,Y,Y,Y,Y,-,-
+95,Eucalyptus,Smolder,24,100,2/7/2023,Y,Y,Y,Y,Y,-,-
+96,Eucalyptus,Smolder,24,100,2/7/2023,Y,Y,Y,Y,Y,-,-
+97,Eucalyptus,Smolder,24,100,2/7/2023,Y,Y,Y,Y,Y,-,-
+98,Eucalyptus,Smolder,24,100,2/7/2023,Y,Y,Y,Y,Y,-,-
+99,Eucalyptus,Smolder,24,100,2/7/2023,Y,Y,Y,Y,Y,-,-
+100,Eucalyptus,Smolder,24,100,2/7/2023,Y,Y,Y,Y,Y,-,-
+101,Saline (- control),,24,0 (used in Carberry et al. 2022),,N,Y,Y,Y,N,-,-
+102,Saline (- control),,24,0 (used in Carberry et al. 2022),,N,Y,Y,Y,N,-,-
+103,Saline (- control),,24,0 (used in Carberry et al. 2022),,N,Y,Y,Y,N,-,-
+104,Saline (- control),,24,0 (used in Carberry et al. 2022),,N,Y,Y,Y,N,-,-
+105,Saline (- control),,24,0 (used in Carberry et al. 2022),,N,Y,Y,Y,N,-,-
+106,Saline (- control),,24,0 (used in Carberry et al. 2022),,N,Y,Y,Y,N,-,-
+107,Red Oak,Flame,24,0 (used in Carberry et al. 2022),,N,Y,Y,Y,N,-,-
+108,Red Oak,Flame,24,0 (used in Carberry et al. 2022),,N,Y,Y,Y,N,-,-
+109,Red Oak,Flame,24,0 (used in Carberry et al. 2022),,N,Y,Y,Y,N,-,-
+110,Red Oak,Flame,24,0 (used in Carberry et al. 2022),,N,Y,Y,Y,N,-,-
+111,Red Oak,Flame,24,0 (used in Carberry et al. 2022),,N,Y,Y,Y,N,-,-
+112,Red Oak,Flame,24,0 (used in Carberry et al. 2022),,N,Y,Y,Y,N,-,-
+113,Peat,Flame,24,0 (used in Carberry et al. 2022),,N,Y,Y,Y,N,-,-
+114,Peat,Flame,24,0 (used in Carberry et al. 2022),,N,Y,Y,Y,N,-,-
+115,Peat,Flame,24,0 (used in Carberry et al. 2022),,N,Y,Y,Y,N,-,-
+116,Peat,Flame,24,0 (used in Carberry et al. 2022),,N,Y,Y,Y,N,-,-
+117,Peat,Flame,24,0 (used in Carberry et al. 2022),,N,Y,Y,Y,N,-,-
+118,Peat,Flame,24,0 (used in Carberry et al. 2022),,N,Y,Y,Y,N,-,-
+119,Pine needles,Flame,24,100,2/7/2023,Y,Y,Y,Y,Y,-,-
+120,Pine needles,Flame,24,100,2/7/2023,Y,Y,Y,Y,Y,-,-
+121,Pine needles,Flame,24,100,2/7/2023,Y,Y,Y,Y,Y,-,-
+122,Pine needles,Flame,24,100,2/7/2023,Y,Y,Y,Y,Y,-,-
+123,Pine needles,Flame,24,100,2/7/2023,Y,Y,Y,Y,Y,-,-
+124,Pine needles,Flame,24,100,2/7/2023,Y,N,Y,Y,N,-,-
+125,Pine,Flame,24,100,2/7/2023,Y,Maybe,Y,Y,N,-,-
+126,Pine,Flame,24,100,2/7/2023,Y,Y,Y,Y,Y,-,-
+127,Pine,Flame,24,100,2/7/2023,Y,Y,Y,Y,Y,-,-
+128,Pine,Flame,24,100,2/7/2023,Y,Y,Y,Y,Y,-,-
+129,Pine,Flame,24,100,2/7/2023,Y,Y,Y,Y,Y,-,-
+130,Pine,Flame,24,100,2/7/2023,Y,Y,Y,Y,Y,-,-
+131,Eucalyptus,Flame,24,100,2/7/2023,Y,Y,Y,Y,Y,-,-
+132,Eucalyptus,Flame,24,100,2/7/2023,Y,Y,Y,Y,Y,-,-
+133,Eucalyptus,Flame,24,100,2/7/2023,Y,Y,Y,Y,Y,-,-
+134,Eucalyptus,Flame,24,100,2/7/2023,Y,Y,Y,Y,Y,-,-
+135,Eucalyptus,Flame,24,100,2/7/2023,Y,Y,Y,Y,Y,-,-
+136,Eucalyptus,Flame,24,100,2/7/2023,Y,Y,Y,Y,Y,-,-
+137,LPS (+ control),,24,100,2/7/2023,Y,Y,Y,Y,Y,-,-
+138,LPS (+ control),,24,100,2/7/2023,Y,Y,Y,Y,Y,-,-
+139,LPS (+ control),,24,100,2/7/2023,Y,Y,Y,Y,Y,-,-
+140,LPS (+ control),,24,100,2/7/2023,Y,Y,Y,Y,Y,-,-
