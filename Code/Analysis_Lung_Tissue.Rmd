@@ -1,0 +1,291 @@
+---
+title: "LungTissue_Analysis"
+author: "Jessie Chappel, Haley Jostes"
+output:
+  pdf_document: default
+  html_document: default
+date: "2025-05-28"
+---
+
+# Libraries
+```{r, message = F, warning = F}
+library(tidyverse)
+library(limma)
+library(dplyr)
+library(ggrepel)
+```
+
+# Functions
+```{r}
+# Counts the number of carbons from lipid name
+count_carbon <- function(string){
+  
+  # Extract the numbers before the colon using regular expressions
+  before_colon_matches <- regmatches(string, gregexpr("[0-9]+:", string))[[1]]
+  before_colon <- as.numeric(substring(before_colon_matches, 1, nchar(before_colon_matches)-1))
+  
+  # Sum 
+  before_colon_sum <- sum(before_colon)
+  return(before_colon_sum)
+  
+  }
+
+# Counts the number of double bonds from lipid name
+count_double <- function(string){
+  # Extract the numbers after the colon using regular expressions
+  after_colon_matches <- regmatches(string, gregexpr(":[0-9]+", string))[[1]]
+  after_colon <- as.numeric(substring(after_colon_matches, 2, nchar(after_colon_matches)))
+  
+  # Sum 
+  after_colon_sum <- sum(after_colon)
+  return(after_colon_sum)
+}
+
+extract_lipid_class <- function(lipid_name) {
+  
+  # Check for 'FA' case
+  if (substr(lipid_name, 1, 2) == "FA") {
+    return("FA")
+  }
+  
+  # Check for 'PC(O-' or 'PC(P-' case
+  if (substr(lipid_name, 1, 6) %in% c("PC(O-", "PC(P-")) {
+    return("PC(O/P-)")
+  }
+  
+  # Check for 'PE(O-' or 'PE(P-' case
+  if (substr(lipid_name, 1, 6) %in% c("PE(O-", "PE(P-")) {
+    return("PE(O/P-)")
+  }
+  
+  # Return original lipid class for other cases
+  return(substr(lipid_name, 1, regexpr("\\(", lipid_name) - 1))
+}
+```
+
+# Load in data
+```{r}
+lipids1 <- read.csv("...RAnalysis_Lung_Negative.csv")
+lipids2 <- read.csv("...RAnalysis_Lung_Positive.csv")
+meta <- read.csv("...Metadata.csv")
+
+```
+
+# Format First Mode
+```{r}
+# Convert to long, format sample names, remove NIST sample
+lipids_long1 <- lipids1 %>%
+  gather(key = 'Sample', value = 'Intensity', -1) %>%
+  mutate(Sample = gsub("^X(\\d+)\\.Total\\.Area\\.MS\\d*$", "\\1", Sample)) %>%
+  filter(Sample != "Ext.NIST.Serum_1.Total.Area.MS1") 
+
+# Extract TIC 
+tic1 <- lipids_long1 %>%
+  filter(Molecule.Name == "TIC") %>%
+  .[, -1]
+colnames(tic1)[2] <- 'TIC'
+
+# Remove TIC from original df
+lipids_long_n1 <- lipids_long1 %>%
+  filter(Molecule.Name != 'TIC')
+
+# Merge metadata
+colnames(meta)[1] <- 'Sample'
+meta_sub <- meta[,1:4]
+meta_sub$Sample <- as.character(meta_sub$Sample)
+dat_met1 <- left_join(lipids_long_n1, meta_sub, by = 'Sample')
+
+# Merge with TIC 
+dat1 <- left_join(dat_met1, tic1, by = 'Sample')
+
+# Clean up names and add treatment column
+colnames(dat1)[1] <- 'Molecule'
+dat1 <- dat1 %>%
+  mutate(Group = sub(" \\(.*\\)", "", .$Group)) %>% # remove positive and negative control labels
+  mutate(Group = gsub(" ", "_", Group)) %>% # convert spaces to _
+  mutate(Treatment = ifelse(Smolder_v_Flame == "", Group, paste0(Group, '_', Smolder_v_Flame))) %>%
+  mutate(Molecule = gsub(" ", "", Molecule)) %>% # Get rid of spaces in lipid names
+  mutate(Molecule = gsub("AC", "carnitine", Molecule)) # chance acylcarnitines to match lipid maps
+
+# Checks
+length(unique(dat1$Sample))
+unique(dat1$Treatment)
+```
+
+# Format Second Mode
+```{r}
+# Convert to long, format sample names, remove NIST sample
+lipids_long2 <- lipids2 %>%
+  gather(key = 'Sample', value = 'Intensity', -1) %>%
+  mutate(Sample = gsub("^X(\\d+)\\.Total\\.Area\\.MS\\d*$", "\\1", Sample)) %>%
+  filter(Sample != "Ext.NIST.Serum_1.Total.Area.MS1") 
+
+# Extract TIC 
+tic2 <- lipids_long2 %>%
+  filter(Molecule.Name == "TIC") %>%
+  .[, -1]
+colnames(tic2)[2] <- 'TIC'
+
+# Remove TIC from original df
+lipids_long_n2 <- lipids_long2 %>%
+  filter(Molecule.Name != 'TIC')
+
+# Merge metadata
+colnames(meta)[1] <- 'Sample'
+meta_sub <- meta[,1:4]
+meta_sub$Sample <- as.character(meta_sub$Sample)
+dat_met2 <- left_join(lipids_long_n2, meta_sub, by = 'Sample')
+
+# Merge with TIC 
+dat2 <- left_join(dat_met2, tic2, by = 'Sample')
+
+# Clean up names and add treatment column
+colnames(dat2)[1] <- 'Molecule'
+dat2 <- dat2 %>%
+  mutate(Group = sub(" \\(.*\\)", "", .$Group)) %>% # remove positive and negative control labels
+  mutate(Group = gsub(" ", "_", Group)) %>% # convert spaces to _
+  mutate(Treatment = ifelse(Smolder_v_Flame == "", Group, paste0(Group, '_', Smolder_v_Flame))) %>%
+  mutate(Molecule = gsub(" ", "", Molecule)) %>% # Get rid of spaces in lipid names
+  mutate(Molecule = gsub("AC", "carnitine", Molecule)) # chance acylcarnitines to match lipid maps
+
+# Checks
+length(unique(dat2$Sample))
+unique(dat2$Treatment)
+```
+
+# Normalize First Mode
+```{r}
+# Plot unnormalized
+d1 <- density(dat1$Intensity)
+plot(d1)
+
+# Normalize
+med_tic1 <- median(dat1$TIC)
+dat_norm1 <- dat1 %>%
+  mutate(Intensity = log2(Intensity/ TIC * med_tic1))
+
+# Plot normalized
+d_norm1 <- density(dat_norm1$Intensity)
+plot(d_norm1)
+
+```
+
+# Normalize Second Mode
+```{r}
+# Plot unnormalized
+d2 <- density(dat2$Intensity)
+plot(d2)
+
+# Normalize
+med_tic2 <- median(dat2$TIC)
+dat_norm2 <- dat2 %>%
+  mutate(Intensity = log2(Intensity/ TIC * med_tic2))
+
+# Plot normalized
+d_norm2 <- density(dat_norm2$Intensity)
+plot(d_norm2)
+
+```
+
+# Convert to wide dataframes and combine
+```{r}
+# Convert to wide
+dat_wide1 <- dat_norm1 %>%
+  spread(., key = Molecule, value = Intensity)
+
+dat_wide2 <- dat_norm2 %>%
+  spread(., key = Molecule, value = Intensity)
+
+# Join dataframes based on a common identifier column (Sample)
+dat_wide <- dat_wide1 %>%
+  left_join(dat_wide2[, c(1, 7:159)], by = "Sample")
+
+```
+
+# Differential expression analysis with Limma
+```{r}
+# Select only the columns from the 7th to the last, transpose it, and convert it to a dataframe
+limma_df <- dat_wide[, 7:ncol(dat_wide)] %>%
+  t(.) %>%
+  as.data.frame()
+
+# Create a factor variable for the treatments
+group <- factor(dat_wide$Treatment)
+
+# Set up the design matrix for the linear model fit, without intercept
+design <- model.matrix(~ 0 + group)
+
+# Rename columns of the design matrix to the levels of the group factor
+colnames(design) <- levels(group)
+
+# Fit the linear model using limma's lmFit function
+fit <- lmFit(limma_df, design)
+
+# Define the contrasts to be tested. Each contrast tests the difference between one treatment and the Saline control
+contrast.matrix <- makeContrasts(
+ Pine_needles_Smolder_vs_Saline = Pine_needles_Smolder - Saline,
+ Pine_Smolder_vs_Saline = Pine_Smolder - Saline,
+ Eucalyptus_Smolder_vs_Saline = Eucalyptus_Smolder - Saline,
+ Pine_needles_Flame_vs_Saline = Pine_needles_Flame - Saline,
+ Pine_Flame_vs_Saline = Pine_Flame - Saline,
+ Eucalyptus_Flame_vs_Saline = Eucalyptus_Flame - Saline,
+ LPS_vs_Saline = LPS - Saline,
+ levels=design
+)
+
+# Update the fit to include the contrasts
+fit2 <- contrasts.fit(fit, contrast.matrix)
+
+# Compute empirical Bayes statistics for differential expression
+fit2 <- eBayes(fit2)
+
+# List the names of the contrasts for iteration
+contrast_names <- colnames(contrast.matrix)
+
+# Initialize an empty list to store results for each contrast
+all_results <- list()
+
+# Loop through each contrast, extract relevant statistics, and store in the all_results list
+for (contrast in contrast_names) {
+  results <- topTable(fit2, coef=contrast, n=Inf)
+  
+  # Subset the results to keep only logFC and P.Value columns and add a new column indicating the contrast name
+  df_results <- results %>%
+    rownames_to_column(., var = 'lipid')
+  df_results$Comparison <- contrast
+  
+  all_results[[contrast]] <- df_results
+}
+
+# Combine the individual contrast result dataframes into one comprehensive dataframe
+final_results <- do.call(rbind, all_results)
+
+# Loop over each contrast to generate plots
+for (i in 1:length(contrast_names)) {
+  # Subset
+  temp <- final_results[final_results$Comparison == contrast_names[i], ] %>%
+    mutate(Sig = ifelse(logFC > 1 & adj.P.Val < 0.05, 'Up', ifelse(logFC < -1 & adj.P.Val < 0.05, "Down", "No")))
+  
+    # Add labels for points that are red ("Up") or blue ("Down")
+  temp <- temp %>%
+    mutate(Label = ifelse(Sig %in% c("Up", "Down"), as.character(lipid), NA))
+  
+  p <- ggplot(temp, aes(x = logFC, y = -log10(adj.P.Val), color = Sig)) + 
+    geom_point(size = 1.2, shape = 16) + 
+    geom_hline(yintercept = -log10(0.05), linetype = "dashed", color = "darkslategray", size = (0.5)) +  # horizontal line at p=0.05
+    geom_vline(xintercept = c(-1, 1), linetype = "dashed", color = "darkslategray", size = (0.5)) +     # vertical lines at logFC = +/-1
+    geom_text_repel(aes(label = Label), box.padding = 0.3, point.padding = 0.1, max.overlaps = 10, size = 3) + # Add labels
+    ggtitle(paste("Volcano plot for", contrast_names[i])) +
+    xlab("Log2 Fold Change (vs. Saline Negative Control)") + ylab("-log10(p-value)") + 
+    scale_color_manual(values = c("No" = "grey", "Up" = "red", "Down" = "blue")) + 
+    theme_classic() +
+    theme(
+        legend.position = "none",
+        axis.text = element_text(color = "black", face = "bold", size = 6, family = "Arial"),
+        axis.title = element_text(color = "black", face = "bold", size = 6, family = "Arial"),
+        axis.line = element_line(color = "black")
+    )
+  print(p)
+}
+
+```

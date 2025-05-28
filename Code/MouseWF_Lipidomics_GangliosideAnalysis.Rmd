@@ -1,0 +1,213 @@
+---
+title: "Analysis for Ganglioside Genes in Mouse Transcriptomics Dataset"
+---
+
+# Set up workspace
+
+```{r message = FALSE, warning = FALSE}
+# Clear global environment
+rm(list=ls())
+
+# Note that geneSynonym has to be installed using devtools
+# library(devtools)
+# install_github('oganm/geneSynonym')
+
+# Load packages
+library(tidyverse) # for data organization and manipulation
+library(openxlsx) # for reading and writing out files
+library(janitor) # for data cleaning
+library(geneSynonym) # for getting gene synonyms
+library(orthogene) # for conversion between species
+library(pheatmap) # for visualization
+library(extrafont) # for visualization
+
+# Define conflicting function
+select <- dplyr::select
+
+# Set theme
+theme_set(theme_bw())
+
+# Set working directory - Elise
+setwd("~/Library/CloudStorage/OneDrive-UniversityofNorthCarolinaatChapelHill/Rager_Lab/Projects_Lead/13_MouseWildfireLipidomics/2_DataAnalysis/1_CurrentAnalysis")
+```
+
+# Read in files
+
+These files contain output from the mouse lung transcriptomics analysis in Koval et al 2022, ["Wildfire Variable Toxicity: Identifying Biomass Smoke Exposure Groupings through Transcriptomic Similarity Scoring"](https://pmc.ncbi.nlm.nih.gov/articles/PMC10777820/).
+
+```{r}
+# Read in files
+mouselung_list <- list.files(path = "./1_InputData/Mouse_Lung_Transcriptomics", pattern = "*.csv", full.names = TRUE)
+mouselung_genes <- lapply(mouselung_list, read.csv)
+
+# Name dataframes within list
+mouselung_filenames <- list.files(path = "./1_InputData/Mouse_Lung_Transcriptomics", pattern = "*.csv")
+names(mouselung_genes) <- mouselung_filenames
+```
+
+This file contains a list of human protein names that have been shown to have a relationship to gangliosides:
+```{r}
+gene_key <- read.xlsx("1_InputData/Ganglioside_Related_Genes.xlsx")
+```
+
+# Preprocess gene info
+
+Convert to mouse orthologs:
+```{r}
+gene_names_mouse <- convert_orthologs(gene_key,
+                               gene_input = "gene",
+                               gene_output = "columns",
+                               standardise_genes = FALSE,
+                               input_species = "human",
+                               output_species = "mouse",
+                               method = "homologene",
+                               drop_nonorths = TRUE,
+                               non121_strategy = "drop_both_species",
+                               mthreshold = Inf,
+                               as_sparse = FALSE,
+                               sort_rows = FALSE,
+                               verbose = TRUE)
+
+```
+
+Find synonyms:
+
+```{r}
+# Create vector of protein names
+gene_synonyms <- mouseSyno(gene_names_mouse$ortholog_gene)
+
+# Define initial list cleaning function
+enframe_proteins <- function(x) { 
+  
+  df <- enframe(x, name = "NCBI_ID", value = "gene_synonym") %>%
+    unnest(gene_synonym)
+  
+  return(df)
+  
+  }
+
+# Collapse vector list into dataframe
+gene_synonyms <- lapply(gene_synonyms, enframe_proteins)
+gene_synonyms <- bind_rows(gene_synonyms, .id = "protein")
+
+# Pull vector of genes to query
+genes_to_query <- gene_synonyms$gene_synonym
+```
+
+# Query mouse transcriptomic data
+
+Here, we will do some cleanup of each dataframe within the list, then filter each dataframe for genes found in our gangliosides list that have an unadjusted p-value < 0.05. 
+
+```{r}
+# Input: data frame and character vector of genes to query, Output: filtered data frame
+lung_gene_cleaning <- function(df, gene_vector) {
+  
+  # Dplyr rename wasn't working for some reason
+  colnames(df)[1] <- "gene_orig"
+  
+  # Perform filtering
+  df_new <- df %>%
+    separate(gene_orig, into = c("gene", NA), sep = "_", remove = FALSE) %>%
+    filter(gene %in% gene_vector) %>%
+    filter(pvalue < 0.05) 
+  
+  return(df_new)
+    
+}
+
+# Apply function
+mouselung_genes_filtered <- lapply(mouselung_genes, lung_gene_cleaning, gene_vector = genes_to_query)
+
+# Collapse into one dataframe
+mouselung_genes_filtered_df <- bind_rows(mouselung_genes_filtered, .id = "exposure") %>%
+  separate(exposure, into = c("exposure", NA), sep = "\\.") %>%
+  mutate(exposure = gsub("MouseLung_", "", exposure)) %>%
+  filter(grepl('Pine|Eucalyptus', exposure))
+
+# Removing duplicates
+## Pivot data wider
+mouselung_genes_filtered_df_wider <- mouselung_genes_filtered_df %>%
+  select(exposure, gene_orig, gene, log2FoldChange) %>%
+  pivot_wider(id_cols = c("gene_orig", "gene"), names_from = "exposure", values_from = "log2FoldChange")
+
+## Pull list of genes where there is only one transcript
+mouselung_genes_unique <- mouselung_genes_filtered_df_wider %>% 
+  group_by(gene) %>% 
+  filter(n() == 1) %>%
+  # Manually removed Ptpn11 since it is synonym for syp, and syp has higher FC
+  filter(gene != "Ptpn11") %>%
+  pull("gene_orig")
+
+## Pull list of duplicated genes to keep (those with the highest average abs(log2FC))
+mouselung_genes_dups_to_keep <- mouselung_genes_filtered_df_wider %>% 
+  group_by(gene) %>% 
+  filter(n() > 1) %>%
+  mutate(across(c(EucalyptusFlame_24h:PineSmolder_4h),\(x) abs(x))) %>%
+  rowwise() %>%
+  mutate(mean = mean(c_across(EucalyptusFlame_24h:PineSmolder_4h), na.rm = TRUE)) %>%
+  arrange(gene, desc(mean)) %>%
+  distinct(gene, .keep_all = TRUE) %>%
+  pull("gene_orig")
+
+## Create vector with all genes to keep
+mouselung_genes_keep <- c(mouselung_genes_unique, mouselung_genes_dups_to_keep)
+
+## Filter dataframe
+mouselung_genes_filtered_df_nodups <- mouselung_genes_filtered_df %>%
+  filter(gene_orig %in% mouselung_genes_keep)
+```
+
+# Visualize results
+
+
+Make a heatmap of just the 4h changes, since those are the matching samples to the lipidomic analysis:
+```{r}
+# 4 hour
+heatmap_input_4h <- mouselung_genes_filtered_df_nodups %>%
+  dplyr::select(exposure, gene, log2FoldChange) %>%
+  pivot_wider(id_cols = "gene", names_from = "exposure", values_from = "log2FoldChange") %>%
+  column_to_rownames("gene") %>%
+  mutate(across(everything(), \(x) ifelse(x > 0, 1, -1))) %>%
+  mutate(across(everything(), \(x) replace_na(x, 0))) %>%
+  select(contains("_4h")) %>%
+  rename_with(~str_remove(., '_4h')) %>%
+  filter_all(any_vars(. != 0)) %>%
+  dplyr::rename("Flaming Eucalyptus" = "EucalyptusFlame",
+                "Smoldering Eucalyptus" = "EucalyptusSmolder",
+                "Flaming Pine" = "PineFlame", 
+                "Smoldering Pine" = "PineSmolder",
+                "Flaming Pine Needles" = "PineNeedlesFlame", 
+                "Smoldering Pine Needles" = "PineNeedlesSmolder")
+
+# Make gene names italic
+newnames <- lapply(
+  rownames(heatmap_input_4h),
+  function(x) bquote(italic(.(x))))
+
+# Import and load fonts (for making font Arial)
+# font_import()
+loadfonts()
+
+# Make heatmap
+heatmap_4h <- pheatmap(as.matrix(t(heatmap_input_4h)),
+                       border_color = "black",
+                       color = c("#0075CC", "#E0E0E0", "#DA0000"),
+                       angle_col = 45, 
+                       fontsize_row = 9,
+                       fontsize_col = 9,
+                       treeheight_col = 20,
+                       treeheight_row = 10,
+                       labels_col = as.expression(newnames),
+                       legend = FALSE)
+
+# Save heatmap
+pdf("2_OutputFigs/GeneHeatmap_Log2FC_Binary_4h.pdf", width = 5.85, height = 2.5, family = "Arial")
+heatmap_4h
+invisible(dev.off())
+
+png("2_OutputFigs/GeneHeatmap_Log2FC_Binary_4h.png", width = 5.85, height = 2.5, family = "Arial", unit = "in", res = 1200)
+heatmap_4h
+invisible(dev.off())
+```
+
+
